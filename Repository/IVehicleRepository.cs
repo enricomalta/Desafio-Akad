@@ -1,5 +1,11 @@
 // Repository/IVehicleRepository.cs
 using VehicleRegistryAPI.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+// Repository/VehicleRepository.cs
+using Microsoft.EntityFrameworkCore;
+using VehicleRegistryAPI.Data;
 
 namespace VehicleRegistryAPI.Repository
 {
@@ -14,11 +20,6 @@ namespace VehicleRegistryAPI.Repository
         Task<bool> ExistsAsync(string licensePlate);
     }
 }
-
-// Repository/VehicleRepository.cs
-using Microsoft.EntityFrameworkCore;
-using VehicleRegistryAPI.Data;
-using VehicleRegistryAPI.Models;
 
 namespace VehicleRegistryAPI.Repository
 {

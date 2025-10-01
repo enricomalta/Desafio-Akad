@@ -1,4 +1,4 @@
-// DTOs/LoginDto.cs
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace VehicleRegistryAPI.DTOs
@@ -13,13 +13,7 @@ namespace VehicleRegistryAPI.DTOs
         [StringLength(100)]
         public string Password { get; set; } = string.Empty;
     }
-}
 
-// DTOs/RegisterDto.cs
-using System.ComponentModel.DataAnnotations;
-
-namespace VehicleRegistryAPI.DTOs
-{
     public class RegisterDto
     {
         [Required]
@@ -34,13 +28,7 @@ namespace VehicleRegistryAPI.DTOs
         [StringLength(50)]
         public string Role { get; set; } = "Editor";
     }
-}
 
-// DTOs/VehicleDto.cs
-using System.ComponentModel.DataAnnotations;
-
-namespace VehicleRegistryAPI.DTOs
-{
     public class VehicleDto
     {
         [Required]
@@ -64,11 +52,7 @@ namespace VehicleRegistryAPI.DTOs
         [StringLength(50)]
         public string Color { get; set; } = string.Empty;
     }
-}
 
-// DTOs/AuthResponseDto.cs
-namespace VehicleRegistryAPI.DTOs
-{
     public class AuthResponseDto
     {
         public string Token { get; set; } = string.Empty;

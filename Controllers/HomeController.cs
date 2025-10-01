@@ -1,6 +1,16 @@
-// Controllers/HomeController.cs
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using VehicleRegistryAPI.Data;
+using VehicleRegistryAPI.DTOs;
 using VehicleRegistryAPI.Models;
+using VehicleRegistryAPI.Services;
+using VehicleRegistryAPI.Repository;
 
 namespace VehicleRegistryAPI.Controllers
 {
@@ -23,18 +33,7 @@ namespace VehicleRegistryAPI.Controllers
             return Ok(response);
         }
     }
-}
 
-// Controllers/AuthController.cs
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VehicleRegistryAPI.Data;
-using VehicleRegistryAPI.DTOs;
-using VehicleRegistryAPI.Models;
-using VehicleRegistryAPI.Services;
-
-namespace VehicleRegistryAPI.Controllers
-{
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -53,7 +52,6 @@ namespace VehicleRegistryAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            // Sanitização básica
             var username = loginDto.Username.Trim().ToLower();
             var password = loginDto.Password.Trim();
 
@@ -63,8 +61,7 @@ namespace VehicleRegistryAPI.Controllers
 
             if (user == null || !_passwordHasher.VerifyPassword(password, user.PasswordHash))
             {
-                // Log de tentativa falha (implementar serviço de logs)
-                await Task.Delay(Random.Shared.Next(200, 500)); // Delay para prevenir timing attacks
+                await Task.Delay(Random.Shared.Next(200, 500));
                 return Unauthorized(new { message = "Credenciais inválidas" });
             }
 
@@ -74,7 +71,6 @@ namespace VehicleRegistryAPI.Controllers
             var token = _jwtService.GenerateToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
 
-            // Salvar refresh token
             user.RefreshTokens.Add(new RefreshToken
             {
                 Token = refreshToken,
@@ -101,9 +97,11 @@ namespace VehicleRegistryAPI.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] string refreshToken)
         {
+            var now = DateTime.UtcNow; ; // add
             var user = await _context.Users
                 .Include(u => u.RefreshTokens)
-                .FirstOrDefaultAsync(u => u.RefreshTokens.Any(rt => rt.Token == refreshToken && rt.IsActive));
+                // .FirstOrDefaultAsync(u => u.RefreshTokens.Any(rt => rt.Token == refreshToken && rt.IsActive));
+                .FirstOrDefaultAsync(u => u.RefreshTokens.Any(rt => rt.Token == refreshToken && rt.Revoked == null && rt.Expires > now));
 
             if (user == null)
                 return Unauthorized(new { message = "Token inválido" });
@@ -111,13 +109,11 @@ namespace VehicleRegistryAPI.Controllers
             var newToken = _jwtService.GenerateToken(user);
             var newRefreshToken = _jwtService.GenerateRefreshToken();
 
-            // Revogar token antigo
             var oldToken = user.RefreshTokens.First(rt => rt.Token == refreshToken);
             oldToken.Revoked = DateTime.UtcNow;
             oldToken.RevokedByIp = GetIpAddress();
             oldToken.ReplacedByToken = newRefreshToken;
 
-            // Adicionar novo token
             user.RefreshTokens.Add(new RefreshToken
             {
                 Token = newRefreshToken,
@@ -146,17 +142,7 @@ namespace VehicleRegistryAPI.Controllers
             return HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
         }
     }
-}
 
-// Controllers/VehiclesController.cs
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using VehicleRegistryAPI.DTOs;
-using VehicleRegistryAPI.Models;
-using VehicleRegistryAPI.Repository;
-
-namespace VehicleRegistryAPI.Controllers
-{
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -193,7 +179,6 @@ namespace VehicleRegistryAPI.Controllers
         [Authorize(Roles = "Admin,Editor")]
         public async Task<ActionResult<Vehicle>> CreateVehicle(VehicleDto vehicleDto)
         {
-            // Sanitização da placa
             var licensePlate = vehicleDto.LicensePlate.Trim().ToUpper();
             
             if (await _vehicleRepository.ExistsAsync(licensePlate))
@@ -225,7 +210,6 @@ namespace VehicleRegistryAPI.Controllers
             if (existingVehicle == null)
                 return NotFound(new { message = "Veículo não encontrado" });
 
-            // Verificar se outra placa já existe
             var licensePlate = vehicleDto.LicensePlate.Trim().ToUpper();
             if (licensePlate != existingVehicle.LicensePlate && 
                 await _vehicleRepository.ExistsAsync(licensePlate))

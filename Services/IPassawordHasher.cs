@@ -1,4 +1,11 @@
-// Services/IPasswordHasher.cs
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
+using VehicleRegistryAPI.Models;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
+
 namespace VehicleRegistryAPI.Services
 {
     public interface IPasswordHasher
@@ -7,10 +14,6 @@ namespace VehicleRegistryAPI.Services
         bool VerifyPassword(string password, string passwordHash);
     }
 }
-
-// Services/PasswordHasher.cs
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Security.Cryptography;
 
 namespace VehicleRegistryAPI.Services
 {
@@ -61,9 +64,6 @@ namespace VehicleRegistryAPI.Services
     }
 }
 
-// Services/IJwtService.cs
-using VehicleRegistryAPI.Models;
-
 namespace VehicleRegistryAPI.Services
 {
     public interface IJwtService
@@ -73,14 +73,6 @@ namespace VehicleRegistryAPI.Services
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
     }
 }
-
-// Services/JwtService.cs
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using VehicleRegistryAPI.Models;
 
 namespace VehicleRegistryAPI.Services
 {
