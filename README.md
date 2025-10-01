@@ -36,7 +36,7 @@ Abra o Swagger UI (URL mostrado no console, normalmente `http://localhost:5000/s
 
 ```json
 {
-  "username": "admin@gmail.com",
+  "username": "admin",
   "password": "TempAdminPassword123!"
 }
 ```
@@ -147,7 +147,7 @@ Você tem três opções para criar o admin inicial:
 
 Opção A — (Atualmente configurado) Seeder automático (Development)
 - `Data/DataSeeder.cs` já cria o usuário:
-  - username: `admin@gmail.com`
+  - username: `admin`
   - password: `TempAdminPassword123!`
 - O seeder é chamado em `Program.cs` no startup. Em Development isso é conveniente. NÃO deixe isso ativo em produção.
 
@@ -177,7 +177,7 @@ Recomendação prática para produção:
 1. Fazer login e capturar token:
 
 ```powershell
-$body = @{ username = 'admin@gmail.com'; password = 'TempAdminPassword123!' } | ConvertTo-Json
+$body = @{ username = 'admin'; password = 'TempAdminPassword123!' } | ConvertTo-Json
 $response = Invoke-RestMethod -Uri 'https://localhost:5000/api/auth/login' -Method Post -Body $body -ContentType 'application/json'
 $token = $response.token
 
