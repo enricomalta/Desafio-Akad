@@ -1,0 +1,4 @@
+D:\Dados\Coding\DIO\desafio akade\Desafio-Akad\obj\Debug\net9.0\Desafio-Akad.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dados\Coding\DIO\desafio akade\Desafio-Akad\obj\Debug\net9.0\Desafio-Akad.AssemblyInfoInputs.cache
+D:\Dados\Coding\DIO\desafio akade\Desafio-Akad\obj\Debug\net9.0\Desafio-Akad.AssemblyInfo.cs
+D:\Dados\Coding\DIO\desafio akade\Desafio-Akad\obj\Debug\net9.0\Desafio-Akad.csproj.CoreCompileInputs.cache
